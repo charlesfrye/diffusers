@@ -181,9 +181,8 @@ def log_validation(
 
     # run inference
     generator = torch.Generator(device=accelerator.device).manual_seed(args.seed) if args.seed else None
-    autocast_ctx = torch.autocast(accelerator.device.type) if not is_final_validation else nullcontext()
 
-    with autocast_ctx:
+    with torch.cuda.amp.autocast():
         images = [pipeline(**pipeline_args, generator=generator).images[0] for _ in range(args.num_validation_images)]
 
     for tracker in accelerator.trackers:
